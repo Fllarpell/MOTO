@@ -1,2 +1,2 @@
 # MOTO
-The prooject creacted with goal merge multi files projects to the once file and build the filetaking into account project dependencies
+The project creacted with goal merge multifiles projects to the once file and build the file taking into account project dependencies
