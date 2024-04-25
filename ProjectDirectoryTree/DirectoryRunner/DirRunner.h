@@ -11,11 +11,22 @@
 
 namespace fs = std::filesystem;
 
-class DirRunner {
-public:
-    static std::vector<std::tuple<std::string, std::vector<std::string>, std::vector<std::string>>>
-    walk(const std::string& top, bool topdown=true, void(*onerror)(const fs::filesystem_error&)=nullptr, bool followLinks=false);
-};
+namespace DirRunner {
+
+    typedef struct DirectoryInfo {
+        std::string directoryPath;
+        std::vector<std::string> directories;
+        std::vector<std::string> files;
+    } DirectoryInfo;
+
+    class DirRunner {
+    public:
+        static std::vector<DirectoryInfo>
+        walk(const std::string& top, bool topdown=true,
+             void(*onerror)(const fs::filesystem_error&)=nullptr, bool followLinks=false);
+    };
+}
+
 
 
 #endif //MOTO_DIRRUNNER_H

@@ -4,9 +4,11 @@
 
 #include "DirRunner.h"
 
-std::vector<std::tuple<std::string, std::vector<std::string>, std::vector<std::string>>>
-DirRunner::walk(const std::string& top, bool topdown=true, void(*onerror)(const fs::filesystem_error&)=nullptr, bool followLinks=false) {
-    static std::vector<std::tuple<std::string, std::vector<std::string>, std::vector<std::string>>> result;
+std::vector<DirRunner::DirectoryInfo>
+DirRunner::DirRunner::walk(const std::string& top, bool topdown,
+                           void(*onerror)(const fs::filesystem_error&), bool followLinks) {
+    DirectoryInfo directoryInfo;
+    static std::vector<DirectoryInfo> result;
     auto islink = [](const fs::path& p) { return fs::is_symlink(p); };
     auto isdir = [](const fs::path& p) { return fs::is_directory(p); };
 
@@ -26,8 +28,13 @@ DirRunner::walk(const std::string& top, bool topdown=true, void(*onerror)(const 
             }
         }
 
-        if (topdown)
-            result.emplace_back(top, dirs, nonDirs);
+        if (topdown) {
+            directoryInfo.directoryPath = top;
+            directoryInfo.directories = dirs;
+            directoryInfo.files = nonDirs;
+            result.emplace_back(directoryInfo);
+        }
+
 
         for (auto& dir : dirs) {
             fs::path new_path = top + "/" + dir;
@@ -37,8 +44,12 @@ DirRunner::walk(const std::string& top, bool topdown=true, void(*onerror)(const 
             }
         }
 
-        if (!topdown)
-            result.emplace_back(top, dirs, nonDirs);
+        if (!topdown) {
+            directoryInfo.directoryPath = top;
+            directoryInfo.directories = dirs;
+            directoryInfo.files = nonDirs;
+            result.emplace_back(directoryInfo);
+        }
 
         return result;
 

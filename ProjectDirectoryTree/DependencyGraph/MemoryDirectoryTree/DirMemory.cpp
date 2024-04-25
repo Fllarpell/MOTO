@@ -2,21 +2,21 @@
 #include "DirMemory.h"
 
 template<typename T>
-DirMemory<T>::DirMemory(int files) {
-    _numFiles = files;
-    adjLists = std::make_shared<std::map<T, std::list<T>>>();
+DirMemory<T>::DirMemory(int numFiles) {
+    _numFiles = numFiles;
+    _files = std::make_shared<std::map<std::string, FILE>>();
 }
 
 template<typename T>
-void DirMemory<T>::addEdge(T src, T dest) {
-    if (adjLists->find(src) == adjLists->end()) {
-        std::list<T> list;
-        list.push_back(dest);
-        adjLists->insert({ src, list });
+void DirMemory<T>::addFileVertex(T path) {
+    FILE* file(path);
+    _files->insert({ path, file });
+}
 
-        return;
-    }
-    adjLists->find(src)->second.push_back(dest);
+template<typename T>
+void DirMemory<T>::addFileEdge(T src, T dest) {
+    FILE* fileTo(dest);
+    _files->find(src)->second.setDependencyFile(fileTo);
 }
 
 template<typename T>
@@ -25,7 +25,7 @@ std::vector<T> DirMemory<T>::topologicalSort() {
     std::map<T, bool> visited = fillInitialVisited();
     std::stack<T> result;
 
-    for (const auto &vertex : *adjLists)
+    for (const auto &vertex : *_files)
         if (!visited.find(vertex.first)->second)
             dfs(vertex.first, visited, result);
 
@@ -41,9 +41,9 @@ std::vector<T> DirMemory<T>::topologicalSort() {
 template<typename T>
 void DirMemory<T>::dfs(T node, std::map<T, bool> &visited, std::stack<T> &result) {
     visited[node] = true;
-    if (adjLists->find(node) != adjLists->end())
-        for (T neighbor : adjLists->find(node)->second)
-            if (!visited.find(neighbor)->second)
+    if (_files->find(node) != _files->end())
+        for (FILE* neighbor : _files->find(node)->second.getDependency())
+            if (!visited.find(neighbor->getPathFile())->second)
                 dfs(neighbor, visited, result);
     result.push(node);
 }
@@ -51,7 +51,7 @@ void DirMemory<T>::dfs(T node, std::map<T, bool> &visited, std::stack<T> &result
 template<typename T>
 std::map<T, bool> DirMemory<T>::fillInitialVisited() {
     std::map<T, bool> visited;
-    for (const auto &mapIterator : *adjLists)
+    for (const auto &mapIterator : *_files)
         visited[mapIterator.first] = false;
     return visited;
 }

@@ -11,7 +11,15 @@
 #include <cstdio>
 
 namespace headerParsing {
-    static void fileParser(const std::string& nameOutput, const std::string& path,
+    typedef struct fileInfo {
+        std::vector<std::string> output;
+        std::vector<std::string> class_prototypes;
+        std::vector<std::string> namespaces;
+        std::vector<std::string> dependencies_libraries;
+        std::vector<std::string> dependencies_files;
+    } fileInfo;
+
+    static fileInfo fileParser(const std::string& path,
                            const std::vector<std::string>& files, bool include_namespaces = false, bool comments = false);
 };
 

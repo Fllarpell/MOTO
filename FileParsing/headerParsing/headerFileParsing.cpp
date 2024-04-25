@@ -4,7 +4,8 @@
 
 #include "headerFileParsing.h"
 
-void headerParsing::fileParser(const std::string& nameOutput, const std::string& path, const std::vector<std::string>& files, bool include_namespaces = false, bool comments = false) {
+
+headerParsing::fileInfo headerParsing::fileParser(const std::string& nameOutput, const std::string& path, const std::vector<std::string>& files, bool include_namespaces, bool comments) {
     std::vector<std::string> output;
     std::vector<std::string> class_prototypes;
     std::vector<std::string> namespaces;
@@ -15,7 +16,8 @@ void headerParsing::fileParser(const std::string& nameOutput, const std::string&
     std::ifstream reader(path);
     std::string fileLine;
     std::vector<std::string> stack_comments;
-    std::map<std::string, std::vector<int>> index_brackets = {{"{", {}}, {"}", {}}};
+
+    //std::map<std::string, std::vector<int>> index_brackets = {{"{", {}}, {"}", {}}};
 
     while (std::getline(reader, fileLine)) {
         bool flag = true;
@@ -130,16 +132,22 @@ void headerParsing::fileParser(const std::string& nameOutput, const std::string&
         if (flag)
             output.push_back(fileLine);
 
-        for (char c : fileLine) {
+        /*for (char c : fileLine) {
             if (c == '{')
                 index_brackets["{"].push_back(  output.size());
             else if (c == '}')
                 index_brackets["}"].push_back(output.size());
-        }
+        }*/
     }
 
-    std::ofstream writer( nameOutput + ".txt");
-    for (const std::string& line : output) {
-        writer << line << std::endl;
-    }
+    headerParsing::fileInfo fileInfo;
+    fileInfo = (headerParsing::fileInfo) {
+        .output = output,
+        .class_prototypes = class_prototypes,
+        .namespaces = namespaces,
+        .dependencies_files = dependencies_files,
+        .dependencies_libraries = dependencies_libraries,
+    };
+
+    return fileInfo;
 }
