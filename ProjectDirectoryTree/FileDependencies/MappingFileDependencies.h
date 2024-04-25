@@ -43,10 +43,10 @@ namespace FileMapping {
 
         for (auto & item : directories) {
             for (auto & file : item.files) {
-                if (fs::path(item.directoryPath + "/" + file).extension() == ".h")
-                    getHeaderFilesInformation(item.directoryPath + "/" + file, files);
-                else if (fs::path(item.directoryPath + "/" + file).extension() == ".cpp")
-                    getCppFilesInformation(item.directoryPath + "/" + file, files);
+                if (fs::path(file).extension() == ".h")
+                    getHeaderFilesInformation(file, files);
+                else if (fs::path(file).extension() == ".cpp")
+                    getCppFilesInformation(file, files);
             }
         }
 

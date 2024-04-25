@@ -21,7 +21,7 @@ namespace headerParsing {
     } fileInfo;
 
     static fileInfo fileParser(const std::string& path,
-                           const std::vector<std::string>& files, bool include_namespaces = false, bool comments = false);
+                           const std::vector<std::string>& files, bool include_namespaces = false, bool comments = true);
 
     fileInfo fileParser(const std::string& path, const std::vector<std::string>& files, bool include_namespaces, bool comments) {
         std::vector<std::string> output;
@@ -29,7 +29,7 @@ namespace headerParsing {
         std::vector<std::string> namespaces;
         std::vector<std::string> dependencies_libraries;
         std::vector<std::string> dependencies_files;
-        std::vector<std::string> ignoreString; // assume this is populated elsewhere
+        std::vector<std::string> ignoreString {"#pragma once", "#ifndef", "#endif", "#if", "#end", "#define"}; // assume this is populated elsewhere
 
         std::ifstream reader(path);
         std::string fileLine;
@@ -69,14 +69,14 @@ namespace headerParsing {
                 if (!comments) {
                     if (std::count(fileLine.begin(), fileLine.end(), ';') == 1) {
                         if (fileLine.find(';') < fileLine.find("//"))
-                            fileLine.replace(fileLine.find(';'), fileLine.size() - fileLine.find(';'), "\n");
+                            fileLine.replace(fileLine.find(';'), fileLine.size() - fileLine.find(';') + 1, "");
                         else
-                            fileLine.replace(fileLine.find("//"), fileLine.size() - fileLine.find("//"), "\n");
+                            fileLine.replace(fileLine.find("//"), fileLine.size() - fileLine.find("//"), "");
                     } else if (std::count(fileLine.begin(), fileLine.end(), ';') == 0) {
                         if (fileLine.find("//") == 0)
                             fileLine.replace(0, fileLine.size(), "");
                         else
-                            fileLine.replace(fileLine.find("//"), fileLine.size() - fileLine.find("//"), "\n");
+                            fileLine.replace(fileLine.find("//"), fileLine.size() - fileLine.find("//"), "");
                     } else if (std::count(fileLine.begin(), fileLine.end(), ';') > 1) {
                         // ...
                     }
@@ -90,13 +90,12 @@ namespace headerParsing {
                 }
             }
 
-            if (fileLine == "\n")
-                flag = false;
+
 
             if (fileLine.find("class") != std::string::npos && fileLine.find(';') != std::string::npos &&
                 fileLine.find("class") < fileLine.find("//") && fileLine.find(';') < fileLine.find("//")) {
                 class_prototypes.push_back(fileLine);
-                flag = false;
+                flag = true;
             }
 
             if (include_namespaces) {
@@ -105,11 +104,11 @@ namespace headerParsing {
                         // pass
                     } else if (fileLine.find("//") != std::string::npos) {
                         if (fileLine.find("namespace") < fileLine.find("//")) {
-                            namespaces.push_back(fileLine.substr(fileLine.find("namespace") + 9).replace(fileLine.find(';'), 1, ""));
+                            namespaces.push_back(fileLine.substr(fileLine.find("namespace") + 9).replace(fileLine.find(';'), 1, "\n"));
                             flag = false;
                         }
                     } else {
-                        namespaces.push_back(fileLine.substr(fileLine.find("namespace") + 9).replace(fileLine.find(';'), 1, ""));
+                        namespaces.push_back(fileLine.substr(fileLine.find("namespace") + 9).replace(fileLine.find(';'), 1, "\n"));
                         flag = false;
                     }
                 }
@@ -124,7 +123,7 @@ namespace headerParsing {
                             dependencies_libraries.push_back(fileLine);
                         else {
                             for (const std::string& f : files) {
-                                if (fileLine.find(f) != std::string::npos) {
+                                if (fileLine.find(f.substr(f.find_last_of('/'), std::string::npos)) != std::string::npos) {
                                     dependencies_files.push_back(f);
                                     library = false;
                                     break;
@@ -141,7 +140,7 @@ namespace headerParsing {
                         dependencies_libraries.push_back(fileLine);
                     } else {
                         for (const std::string& f : files) {
-                            if (fileLine.find(f) != std::string::npos) {
+                            if (fileLine.find(f.substr(f.find_last_of('/'), std::string::npos)) != std::string::npos) {
                                 dependencies_files.push_back(f);
                                 library = false;
                                 break;
@@ -154,7 +153,7 @@ namespace headerParsing {
             }
 
             if (flag)
-                output.push_back(fileLine);
+                output.push_back(fileLine + "\n");
 
             /*for (char c : fileLine) {
                 if (c == '{')

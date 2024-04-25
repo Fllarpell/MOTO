@@ -4,6 +4,7 @@
 
 #include "../../../src/include.h"
 #include "../../FileDependencies/MappingFileDependencies.h"
+#include "../../../FileMerger/Merger.h"
 #include <cstddef>
 #include <memory>
 #include <stack>
@@ -17,6 +18,12 @@ public:
     ~DirMemory() = default;
     void run(const std::string &top)  {
 
+        std::map<std::string, cppParsing::fileInfo> _comp;
+
+        // do it more generic
+        std::vector<std::string> class_prototypes;
+        std::vector<std::string> includes;
+
         _mappingFileDependencies = std::make_shared<FileMapping::MappingFileDependencies<T>>();
 
         FileMapping::directoryArchive<T> archive = _mappingFileDependencies->getDirectoryArchive(top);
@@ -24,24 +31,61 @@ public:
         for (auto & item : archive.directories) {
             for (auto & file : item.files) {
                 if (fs::path(item.directoryPath + "/" + file).extension() == ".h" || fs::path(item.directoryPath + "/" + file).extension() == ".cpp")
-                    addFileVertex(item.directoryPath + "/" + file);
+                    addFileVertex(file);
 
             }
         }
         _numFiles = _files->size();
 
         for (auto & item : archive._headerFileInformation) {
+            for (auto & file : item.second.class_prototypes)
+                class_prototypes.push_back(file);
+            for (auto & file : item.second.dependencies_libraries)
+                includes.push_back(file);
             for (auto & file : item.second.dependencies_files) {
-                addFileEdge(item.first, item.second.path);
+                addFileEdge(item.first, file);
             }
         }
         for (auto & item : archive._cppFileInformation) {
+            for (auto & file : item.second.class_prototypes)
+                class_prototypes.push_back(file);
             for (auto & file : item.second.dependencies_files) {
-                addFileEdge(item.first, item.second.path);
+                addFileEdge(item.first, file);
             }
         }
 
-        topologicalSort();
+        std::vector<T> order = topologicalSort();
+
+        std::vector<headerParsing::fileInfo> ordering;
+
+        std::vector<cppParsing::fileInfo> comparing;
+
+        std::vector<cppParsing::fileInfo> main;
+
+        for (auto & path : order)
+            for (auto & head : archive._headerFileInformation)
+                if (path == head.second.path) {
+                    ordering.push_back(head.second);
+                }
+
+        for (auto & path : order)
+            for (auto & cpp : archive._cppFileInformation)
+                if (path.substr(path.find_last_of('.'), std::string::npos) == ".h")
+                    if (path.substr(0, path.find_last_of('.')).substr(path.find_last_of('/'), std::string::npos) == cpp.second.path.substr(0, cpp.second.path.find_last_of('.')).substr(cpp.second.path.find_last_of('/'), std::string::npos))
+                        comparing.push_back(cpp.second);
+
+        for (auto & path : order)
+            for (auto & cpp : comparing)
+                if (path.substr(path.find_last_of('.'), std::string::npos) == ".h")
+                    if (path.substr(0, path.find_last_of('.')).substr(path.find_last_of('/'), std::string::npos) == cpp.path.substr(0, cpp.path.find_last_of('.')).substr(cpp.path.find_last_of('/'), std::string::npos))
+                        _comp.insert({path, cpp});
+
+
+        for (auto & cpp : archive._cppFileInformation)
+            if (cpp.second.path.find("main.cpp") != std::string::npos)
+                main.push_back(cpp.second);
+
+        Merger::mergeProject(main, class_prototypes, includes, ordering, _comp);
 
     }
 
@@ -81,7 +125,6 @@ void DirMemory<T>::addFileVertex(T path) {
 
 template<typename T>
 void DirMemory<T>::addFileEdge(T src, T dest) {
-
     _files->find(src)->second.setDependencyFile(_files->find(dest)->second);
 }
 
@@ -102,9 +145,6 @@ std::vector<T> DirMemory<T>::topologicalSort() {
     }
 
     std::reverse(sorted.begin(), sorted.end());
-    for (const std::string& string : sorted)
-        std::cout << string << "\n";
-
     return sorted;
 }
 

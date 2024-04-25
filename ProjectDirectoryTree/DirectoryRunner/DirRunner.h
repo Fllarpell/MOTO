@@ -8,6 +8,7 @@
 #include "../../src/include.h"
 #include <tuple>
 #include <filesystem>
+#include <string>
 
 namespace fs = std::filesystem;
 

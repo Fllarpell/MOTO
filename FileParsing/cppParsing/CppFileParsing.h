@@ -20,7 +20,7 @@ namespace cppParsing {
     };
 
     static fileInfo fileParser(const std::string& path,
-                               const std::vector<std::string>& files, bool include_namespaces = false, bool comments = false);
+                               const std::vector<std::string>& files, bool include_namespaces = false, bool comments = true);
 
     fileInfo fileParser(const std::string& path, const std::vector<std::string>& files, bool include_namespaces, bool comments) {
         std::vector<std::string> output;
@@ -89,8 +89,7 @@ namespace cppParsing {
                 }
             }
 
-            if (fileLine == "\n")
-                flag = false;
+
 
             if (fileLine.find("class") != std::string::npos && fileLine.find(';') != std::string::npos &&
                 fileLine.find("class") < fileLine.find("//") && fileLine.find(';') < fileLine.find("//")) {
@@ -123,7 +122,7 @@ namespace cppParsing {
                             dependencies_libraries.push_back(fileLine);
                         else {
                             for (const std::string& f : files) {
-                                if (fileLine.find(f) != std::string::npos) {
+                                if (fileLine.find(f.substr(f.find_last_of('/'), std::string::npos)) != std::string::npos) {
                                     dependencies_files.push_back(f);
                                     library = false;
                                     break;
@@ -139,7 +138,7 @@ namespace cppParsing {
                         dependencies_libraries.push_back(fileLine);
                     } else {
                         for (const std::string& f : files) {
-                            if (fileLine.find(f) != std::string::npos) {
+                            if (fileLine.find(f.substr(f.find_last_of('/'), std::string::npos)) != std::string::npos) {
                                 dependencies_files.push_back(f);
                                 library = false;
                                 break;
@@ -153,7 +152,7 @@ namespace cppParsing {
             }
 
             if (flag)
-                output.push_back(fileLine);
+                output.push_back(fileLine + "\n");
 
             /*for (char c : fileLine) {
                 if (c == '{')
