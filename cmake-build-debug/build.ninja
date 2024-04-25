@@ -73,17 +73,23 @@ build CMakeFiles/MOTO.dir/FileParsing/headerParsing/headerFileParsing.cpp.obj: C
   OBJECT_DIR = CMakeFiles\MOTO.dir
   OBJECT_FILE_DIR = CMakeFiles\MOTO.dir\FileParsing\headerParsing
 
-build CMakeFiles/MOTO.dir/ProjectDirectoryTree/DependencyGraph/MemoryDirectoryTree/FileDependencies/MappingFileDependencies.cpp.obj: CXX_COMPILER__MOTO_unscanned_Debug C$:/Users/dimas/CLionProjects/MOTO/MOTO/ProjectDirectoryTree/DependencyGraph/MemoryDirectoryTree/FileDependencies/MappingFileDependencies.cpp || cmake_object_order_depends_target_MOTO
-  DEP_FILE = CMakeFiles\MOTO.dir\ProjectDirectoryTree\DependencyGraph\MemoryDirectoryTree\FileDependencies\MappingFileDependencies.cpp.obj.d
+build CMakeFiles/MOTO.dir/ProjectDirectoryTree/FileDependencies/MappingFileDependencies.cpp.obj: CXX_COMPILER__MOTO_unscanned_Debug C$:/Users/dimas/CLionProjects/MOTO/MOTO/ProjectDirectoryTree/FileDependencies/MappingFileDependencies.cpp || cmake_object_order_depends_target_MOTO
+  DEP_FILE = CMakeFiles\MOTO.dir\ProjectDirectoryTree\FileDependencies\MappingFileDependencies.cpp.obj.d
   FLAGS = -g -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\MOTO.dir
-  OBJECT_FILE_DIR = CMakeFiles\MOTO.dir\ProjectDirectoryTree\DependencyGraph\MemoryDirectoryTree\FileDependencies
+  OBJECT_FILE_DIR = CMakeFiles\MOTO.dir\ProjectDirectoryTree\FileDependencies
 
 build CMakeFiles/MOTO.dir/FileParsing/cppParsing/CppFileParsing.cpp.obj: CXX_COMPILER__MOTO_unscanned_Debug C$:/Users/dimas/CLionProjects/MOTO/MOTO/FileParsing/cppParsing/CppFileParsing.cpp || cmake_object_order_depends_target_MOTO
   DEP_FILE = CMakeFiles\MOTO.dir\FileParsing\cppParsing\CppFileParsing.cpp.obj.d
   FLAGS = -g -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\MOTO.dir
   OBJECT_FILE_DIR = CMakeFiles\MOTO.dir\FileParsing\cppParsing
+
+build CMakeFiles/MOTO.dir/FileMerger/Merger.cpp.obj: CXX_COMPILER__MOTO_unscanned_Debug C$:/Users/dimas/CLionProjects/MOTO/MOTO/FileMerger/Merger.cpp || cmake_object_order_depends_target_MOTO
+  DEP_FILE = CMakeFiles\MOTO.dir\FileMerger\Merger.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\MOTO.dir
+  OBJECT_FILE_DIR = CMakeFiles\MOTO.dir\FileMerger
 
 
 # =============================================================================
@@ -93,7 +99,7 @@ build CMakeFiles/MOTO.dir/FileParsing/cppParsing/CppFileParsing.cpp.obj: CXX_COM
 #############################################
 # Link the executable MOTO.exe
 
-build MOTO.exe: CXX_EXECUTABLE_LINKER__MOTO_Debug CMakeFiles/MOTO.dir/src/main.cpp.obj CMakeFiles/MOTO.dir/ProjectDirectoryTree/DirectoryRunner/DirRunner.cpp.obj CMakeFiles/MOTO.dir/ProjectDirectoryTree/DependencyGraph/MemoryDirectoryTree/DirMemory.cpp.obj CMakeFiles/MOTO.dir/FileParsing/headerParsing/headerFileParsing.cpp.obj CMakeFiles/MOTO.dir/ProjectDirectoryTree/DependencyGraph/MemoryDirectoryTree/FileDependencies/MappingFileDependencies.cpp.obj CMakeFiles/MOTO.dir/FileParsing/cppParsing/CppFileParsing.cpp.obj
+build MOTO.exe: CXX_EXECUTABLE_LINKER__MOTO_Debug CMakeFiles/MOTO.dir/src/main.cpp.obj CMakeFiles/MOTO.dir/ProjectDirectoryTree/DirectoryRunner/DirRunner.cpp.obj CMakeFiles/MOTO.dir/ProjectDirectoryTree/DependencyGraph/MemoryDirectoryTree/DirMemory.cpp.obj CMakeFiles/MOTO.dir/FileParsing/headerParsing/headerFileParsing.cpp.obj CMakeFiles/MOTO.dir/ProjectDirectoryTree/FileDependencies/MappingFileDependencies.cpp.obj CMakeFiles/MOTO.dir/FileParsing/cppParsing/CppFileParsing.cpp.obj CMakeFiles/MOTO.dir/FileMerger/Merger.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\MOTO.dir

@@ -14,4 +14,6 @@ add_executable(MOTO src/main.cpp
         ProjectDirectoryTree/FileDependencies/MappingFileDependencies.cpp
         ProjectDirectoryTree/FileDependencies/MappingFileDependencies.h
         FileParsing/cppParsing/CppFileParsing.cpp
-        FileParsing/cppParsing/CppFileParsing.h)
+        FileParsing/cppParsing/CppFileParsing.h
+        FileMerger/Merger.cpp
+        FileMerger/Merger.h)
